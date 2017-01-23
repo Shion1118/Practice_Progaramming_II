@@ -44,6 +44,13 @@ public class NonlinearEquation {
 		this.POSITIVE_MAX = _alfa * (int)(5.0 / _alfa);
 	}
 
+	/* Newton */
+	public NonlinearEquation(double value, double x) {
+		this.answer_ = 0.0;
+		this._alfa = value;
+		this.initialValue_ = x;
+	}
+
 	private boolean _solveNLEByLinearIteration() {
 		double value, pastValue = 0.0;
 		int cnt = 0;
@@ -60,7 +67,7 @@ public class NonlinearEquation {
 			cnt++;
 		}
 
-		System.out.println("X = " + value + " at interation " + cnt + ".");
+		System.out.println("X = " + value + " at interation " + cnt + "." + "\n");
 		this.answer_ = value;
 		return true;
 	}
@@ -93,7 +100,7 @@ public class NonlinearEquation {
 			cnt++;
 		}
 
-		System.out.println("X = " + mid + " at interation " + cnt + ".");
+		System.out.println("X = " + mid + " at interation " + cnt + "." + "\n");
 		this.answer_ = pastMid;
 		return true;
 	}
@@ -105,12 +112,12 @@ public class NonlinearEquation {
 		double positive = this.POSITIVE_MAX;
 		int cnt = 1;
 
-		Function<Double, Double> calc = x -> (x + this._alfa == 0) ? 1.0 : Math.sin(x + this._alfa) / (x + this._alfa);
+		Function<Double, Double> func = x -> (x + this._alfa == 0) ? 1.0 : Math.sin(x + this._alfa) / (x + this._alfa);
 
-		valueNegative = calc.apply(negative);
-		valuePositive = calc.apply(positive);
+		valueNegative = func.apply(negative);
+		valuePositive = func.apply(positive);
 		xNext = (negative * valuePositive - positive * valueNegative) / (valuePositive - valueNegative);
-		valueF = calc.apply(xNext);
+		valueF = func.apply(xNext);
 
 		System.out.println("xNext = " + xNext + ", f(xNext) = " + valueF + ", xPastNext = " +xPastNext);
 		while (Math.abs(xNext - xPastNext) >= EPSILON && valueF != 0) {
@@ -120,16 +127,39 @@ public class NonlinearEquation {
 				positive = xNext;
 			}
 			xPastNext = xNext;
-			valueNegative = calc.apply(negative);
-			valuePositive = calc.apply(positive);
+			valueNegative = func.apply(negative);
+			valuePositive = func.apply(positive);
 			xNext = (negative * valuePositive - positive * valueNegative) / (valuePositive - valueNegative);
-			valueF = calc.apply(xNext);
+			valueF = func.apply(xNext);
 
 			System.out.println("xNext = " + xNext + ", f(xNext) = " + valueF + ", xPastNext = " +xPastNext);
 			cnt++;
 		}
 
-		System.out.println("X = " + xNext + " at interation " + cnt + ".");
+		System.out.println("X = " + xNext + " at interation " + cnt + "." + "\n");
+		this.answer_ = xNext;
+		return true;
+	}
+
+	private boolean _solveNLEByNewton() {
+		double xNext = this.initialValue_;
+		double xPastNext = 0.0;
+		int cnt = 1;
+
+		double h = 1e-5;
+		Function<Double, Double> func = x -> Math.exp(x) - this._alfa * x;
+		/*  中心差分による微分 */
+		Function<Double, Double> funcDiff = x -> (func.apply(x + h) - func.apply(x - h)) / (h * 2);
+
+		while (Math.abs(xNext - xPastNext) >= EPSILON) {
+			xPastNext = xNext;
+			xNext = xPastNext - func.apply(xPastNext) / funcDiff.apply(xPastNext);
+
+			System.out.println("xNext = " + xNext + ", f(xNext) = " + func.apply(xNext));
+			cnt++;
+		}
+
+		System.out.println("X = " + xNext + " at interation " + cnt + "." + "\n");
 		this.answer_ = xNext;
 		return true;
 	}
@@ -143,6 +173,9 @@ public class NonlinearEquation {
 
 		NonlinearEquation eq3 = new NonlinearEquation(26);
 		if (!eq3._solveNLEByRegulaFalsi()) System.out.println("ERROR");
+
+		NonlinearEquation eq4 = new NonlinearEquation(2.97, 1.19);
+		if (!eq4._solveNLEByNewton()) System.out.println("ERROR");
 	}
 
 }
