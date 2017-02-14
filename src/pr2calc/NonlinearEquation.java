@@ -39,7 +39,7 @@ public class NonlinearEquation {
 	/* RegulaFalsi */
 	public NonlinearEquation(int value) {
 		this.answer_ = 0.0;
-		this._alfa = (value % 3) + 1;;
+		this._alfa = 1.0;
 		this.NEGATIVE_MAX = 0.0;
 		this.POSITIVE_MAX = _alfa * (int)(5.0 / _alfa);
 	}
@@ -174,7 +174,7 @@ public class NonlinearEquation {
 		NonlinearEquation eq3 = new NonlinearEquation(26);
 		if (!eq3._solveNLEByRegulaFalsi()) System.out.println("ERROR");
 
-		NonlinearEquation eq4 = new NonlinearEquation(2.97, 1.19);
+		NonlinearEquation eq4 = new NonlinearEquation(3.05, 1.19);
 		if (!eq4._solveNLEByNewton()) System.out.println("ERROR");
 	}
 
