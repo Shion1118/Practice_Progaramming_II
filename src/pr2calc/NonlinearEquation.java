@@ -9,14 +9,14 @@ public class NonlinearEquation {
 
 	private double initialValue_;
 	private double answer_;
-	private double _alfa;
+	private double _alpha;
 
 	private double NEGATIVE_MAX;
 	private double POSITIVE_MAX;
 
 	public NonlinearEquation() {
 		this.answer_ = 0.0;
-		this._alfa = 0.0;
+		this._alpha = 0.0;
 		this.NEGATIVE_MAX = 0.0;
 		this.POSITIVE_MAX = 0.0;
 	}
@@ -25,29 +25,29 @@ public class NonlinearEquation {
 	public NonlinearEquation(double value) {
 		this.initialValue_ = (value % 3) * 2;
 		this.answer_ = 0.0;
-		this._alfa = value % 10;
+		this._alpha = value % 10;
 	}
 
 	/* BisectionMethod */
 	public NonlinearEquation(int value, double negative) {
 		this.answer_ = 0.0;
-		this._alfa = (value % 3) + 1;
+		this._alpha = (value % 3) + 1;
 		this.NEGATIVE_MAX = negative;
-		this.POSITIVE_MAX = _alfa * (int)(5.0 / _alfa);
+		this.POSITIVE_MAX = _alpha * (int)(5.0 / _alpha);
 	}
 
 	/* RegulaFalsi */
 	public NonlinearEquation(int value) {
 		this.answer_ = 0.0;
-		this._alfa = 1.0;
+		this._alpha = 1.0;
 		this.NEGATIVE_MAX = 0.0;
-		this.POSITIVE_MAX = _alfa * (int)(5.0 / _alfa);
+		this.POSITIVE_MAX = _alpha * (int)(5.0 / _alpha);
 	}
 
 	/* Newton */
 	public NonlinearEquation(double value, double x) {
 		this.answer_ = 0.0;
-		this._alfa = value;
+		this._alpha = value;
 		this.initialValue_ = x;
 	}
 
@@ -56,13 +56,13 @@ public class NonlinearEquation {
 		int cnt = 0;
 
 		pastValue = this.initialValue_;
-		value = Math.sqrt(10 + this._alfa +pastValue);
+		value = Math.sqrt(10 + this._alpha +pastValue);
 
 		System.out.println("value = " + value + " , pastValue = " + pastValue);
 		while (Math.abs(value - pastValue) >= EPSILON) {
 			if (cnt > MAXIMUM_IT) return false;
 			pastValue = value;
-			value = Math.sqrt(10 + this._alfa + value);
+			value = Math.sqrt(10 + this._alpha + value);
 			System.out.println("value = " + value + ", pastValue = " + pastValue);
 			cnt++;
 		}
@@ -79,7 +79,7 @@ public class NonlinearEquation {
 		double mid, pastMid = 0;
 		int cnt = 0;
 		mid = (positive + negative) / 2;
-		value = Math.sin(mid + this._alfa) / (mid + this._alfa);
+		value = Math.sin(mid + this._alpha) / (mid + this._alpha);
 
 		System.out.println("xMid = " + mid + ", f(xMid) = " + value + ", xPastMid = " + pastMid);
 		while (Math.abs(mid - pastMid) >= EPSILON) {
@@ -93,7 +93,7 @@ public class NonlinearEquation {
 			pastMid = mid;
 			mid = (positive + negative) / 2;
 
-			value = Math.sin(mid + this._alfa) / (mid + this._alfa);
+			value = Math.sin(mid + this._alpha) / (mid + this._alpha);
 			if(value == 0) break;
 
 			System.out.println("xMid = " + mid + ", f(xMid) = " + value + ", xPastMid = " + pastMid);
@@ -112,7 +112,7 @@ public class NonlinearEquation {
 		double positive = this.POSITIVE_MAX;
 		int cnt = 1;
 
-		Function<Double, Double> func = x -> (x + this._alfa == 0) ? 1.0 : Math.sin(x + this._alfa) / (x + this._alfa);
+		Function<Double, Double> func = x -> (x + this._alpha == 0) ? 1.0 : Math.sin(x + this._alpha) / (x + this._alpha);
 
 		valueNegative = func.apply(negative);
 		valuePositive = func.apply(positive);
@@ -147,7 +147,7 @@ public class NonlinearEquation {
 		int cnt = 1;
 
 		double h = 1e-5;
-		Function<Double, Double> func = x -> Math.exp(x) - this._alfa * x;
+		Function<Double, Double> func = x -> Math.exp(x) - this._alpha * x;
 		/*  中心差分による微分 */
 		Function<Double, Double> funcDiff = x -> (func.apply(x + h) - func.apply(x - h)) / (h * 2);
 
